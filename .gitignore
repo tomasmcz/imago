@@ -1,0 +1,10 @@
+*.pyc
+*.so
+saved
+captured
+doc/*.aux
+doc/*.log
+doc/*.out
+doc/*.pdf
+doc/*.synctex.gz
+doc/_build

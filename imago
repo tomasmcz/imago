@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+"""Go image recognition."""
+
+from src import imago
+
+imago.main()
