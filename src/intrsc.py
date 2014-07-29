@@ -55,6 +55,7 @@ def board(image, intersections, show_all, do_something, logger):
 #    image_c = filters.color_enhance(image)
 #    if show_all:
 #        do_something(image_c, "white balance")
+
     image_c = image
     
     board_raw = []
@@ -82,29 +83,13 @@ def board(image, intersections, show_all, do_something, logger):
         image_p = Image.fromstring('RGB', size, buff, 'raw')
         do_something(image_p, "color distribution")
 
-    #max_s0 = max(s[0] for s in board_raw)
-    #min_s0 = min(s[0] for s in board_raw)
-    #norm_s0 = lambda x: (x - min_s0) / (max_s0 - min_s0)
-    #max_s1 = max(s[1] for s in board_raw)
-    #min_s1 = min(s[1] for s in board_raw)
-    #norm_s1 = lambda x: (x - min_s1) / (max_s1 - min_s1)
-    #max_s1 = max(s[1] for s in board_raw)
-    #min_s1 = min(s[1] for s in board_raw)
-    #norm_s1 = lambda x: (x - min_s1) / (max_s1 - min_s1)
-    #color_data = [(norm_s0(s[0]), norm_s1(s[1])) for s in board_raw]
     color_data = [(s[0], s[1]) for s in board_raw]
 
     init_x = sum(c[0] for c in color_data) / float(len(color_data))
 
     clusters, score = k_means.cluster(3, 2,zip(color_data, range(len(color_data))),
                                [[0., 0.5], [init_x, 0.5], [1., 0.5]])
-#    clusters1, score1 = k_means.cluster(1, 2,zip(color_data, range(len(color_data))),
-#                               [[0.5, 0.5]])
-#    clusters2, score2 = k_means.cluster(2, 2,zip(color_data, range(len(color_data))),
-#                               [[0., 0.5], [0.75, 0.5]])
-#    import sys
-#    print >> sys.stderr, score1, score2, score
-#
+
     if show_all:
         fig = pyplot.figure(figsize=(8, 6))
         pyplot.scatter([d[0][0] for d in clusters[0]], [d[0][1] for d in clusters[0]],
@@ -181,14 +166,6 @@ def rgb2lumsat(color):
     else:
         saturation = 1. - ((3. * min(color)) / sum(color)) 
     return luma, saturation
-
-def median(lst):
-    #TODO comment (or delete maybe?)
-    len_lst = len(lst)
-    if len_lst % 2 == 0:
-        return (lst[len_lst / 2] + lst[len_lst / 2 + 1]) / 2.0
-    else:
-        return lst[len_lst / 2]
 
 def stone_color_raw(image, (x, y)):
     """Given image and coordinates, return stone color."""
