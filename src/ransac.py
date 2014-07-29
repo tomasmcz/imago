@@ -27,6 +27,8 @@ def least_squares(data):
     return (a, -1, c)
 
 class Linear_model:
+    """Linear model for RANSAC."""
+    
     def __init__(self, data):
         self.data = data
 
@@ -70,6 +72,7 @@ def iterate(model, distance):
     return score, estimate, consensual
         
 def estimate(data, dist, k, modelClass=Linear_model, model=None):
+    """Estimate model from data with RANSAC."""
     if not model:
         model = modelClass(data)
     best = float("inf")

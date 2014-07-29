@@ -13,12 +13,17 @@ hough
 .. automodule:: hough
     :members:
 
+ransac.py
+---------
+
+.. automodule:: ransac
+    :members:
+
 geometry
 --------
 
 .. automodule:: geometry
     :members:
-
 
 filters
 -------
