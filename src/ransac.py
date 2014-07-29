@@ -8,15 +8,18 @@ import numpy as NP
 # TODO threshold
 
 def points_to_line((x1, y1), (x2, y2)):
+    """Take two points, return coefficitiens for line that connects them."""
     return (y2 - y1, x1 - x2, x2 * y1 - x1 * y2)
 
 def filter_near(data, line, distance):
+    """Find points in *data* that are closer than *distance* to *line*."""
     a, b, c = line
     dst = lambda (x, y): abs(a * x + b * y + c) / sqrt(a*a+b*b)
     is_near = lambda p: dst(p) <= distance
     return [p for p in data if is_near(p)]
 
 def least_squares(data):
+    """The least squares method."""
     x = NP.matrix([(a, 1) for (a, b) in data])
     xt = NP.transpose(x)
     y = NP.matrix([[b] for (a, b) in data])

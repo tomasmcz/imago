@@ -1,3 +1,9 @@
+"""Imago gridf_analyzer
+
+This module serves for vizualization of search space of the old gridf, that is
+based on Cuckoo search. To use it, uncomment relevant parts of gridf_old.py.
+"""
+
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import sys
