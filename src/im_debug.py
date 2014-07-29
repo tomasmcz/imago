@@ -1,6 +1,6 @@
 """Debugging image display.
 
-This is a simple module, that shows images on screen using PyGame.
+This is a simple module that shows images on screen using PyGame.
 It is not used anywhere in the standard UI, serves only for debugging.
 """
 
@@ -8,7 +8,7 @@ try:
     import pygame
 except ImportError, msg:
     import sys
-    print >>sys.stderr, msg
+    print >> sys.stderr, msg
     sys.exit(1)
 
 def show(image, caption='', name=None):

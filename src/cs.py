@@ -1,4 +1,7 @@
-"""Cuckoo search optimization"""
+"""Cuckoo search optimization
+
+This module was used in the older version of gridf.
+"""
 
 import random
 import lhs
