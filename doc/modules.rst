@@ -32,10 +32,10 @@ linef
 .. automodule:: linef
     :members:
 
-gridf
------
+gridf_new
+---------
 
-.. automodule:: gridf
+.. automodule:: gridf_new
     :members:
 
 intrsc
