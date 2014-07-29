@@ -1,3 +1,8 @@
+"""Imago grid fitting module
+
+RANSAC inspired method.
+"""
+
 import random
 from math import sqrt
 
@@ -16,11 +21,12 @@ class BadGenError(Exception):
     pass
 
 def plot_line(line, c, size):
+    """Plot a *line* with pyplot."""
     points = linef.line_from_angl_dist(line, size)
     pyplot.plot(*zip(*points), color=c)
 
-
 class Diagonal_model:
+    """Ransac model for finding diagonals."""
     def __init__(self, data):
         self.data = [p for p in sum(data, []) if p]
         self.lines = data
@@ -73,6 +79,7 @@ class Diagonal_model:
         return score, cons
 
 def intersection((a1, b1, c1), (a2, b2, c2)):
+    """Intersection of two lines, given by coefficients in their equations."""
     delim = float(a1 * b2 - b1 * a2)
     if delim == 0:
         return None
@@ -81,6 +88,7 @@ def intersection((a1, b1, c1), (a2, b2, c2)):
     return x, y
 
 class Point:
+    """Class that represents a point in 2D."""
     def __init__(self, (x, y)):
         self.x = x
         self.y = y
@@ -102,6 +110,13 @@ class Point:
         return (self.x, self.y)
 
 class Line:
+    """Line with a list of important points that lie on it.
+
+    This and the Point class in this module serves to implement a model of
+    perspective plain -- a line has a list of intersections with other lines and
+    each intersection has two lines that go through it.
+    """
+
     def __init__(self, (a, b, c)):
         self.a, self.b, self.c = (a, b, c)
         self.points = []
@@ -128,6 +143,7 @@ class Line:
             return self.c
 
 def gen_corners(d1, d2, min_size):
+    """Generate candidates on corner positions from the diagonals."""
     for c1 in d1.points:
         if c1 in d2.points:
             continue
@@ -157,6 +173,7 @@ def gen_corners(d1, d2, min_size):
             # TODO define SquareTooSmallError or something
 
 def dst(p, l):
+    """Distance from a point to a line."""
     (x, y), (a, b, c) = p, ransac.points_to_line(*l)
     return abs(a * x + b * y + c) / sqrt(a*a+b*b)
 
@@ -172,6 +189,13 @@ def score(lines, points):
 
 
 def find(lines, size, l1, l2, bounds, hough, show_all, do_something, logger):
+    """Find the best grid given the *lines* and *size* of the image.
+    
+    Last three parameters serves for debugging, *l1*, *l2*, *bounds* and *hough*
+    are here for compatibility with older version of gridf, so they can be
+    easily exchanged, tested and compared.
+    """
+
     new_lines1 = map(lambda l: Line.from_ad(l, size), lines[0])
     new_lines2 = map(lambda l: Line.from_ad(l, size), lines[1])
     for l1 in new_lines1:
