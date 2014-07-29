@@ -7,8 +7,9 @@ import random
 from math import sqrt
 
 from intrsc import intersections_from_angl_dist
-import linef as linef
-import ransac as ransac
+import linef
+import params
+import ransac
 import manual_lines as manual
 from geometry import l2ad
 
@@ -216,7 +217,8 @@ def find(lines, size, l1, l2, bounds, hough, show_all, do_something, logger):
     for n_tries in xrange(3):
         logger("finding the diagonals")
         model = Diagonal_model(points)
-        diag_lines = ransac.ransac_multi(6, points, 2, 400, model=model)
+        diag_lines = ransac.ransac_multi(6, points, 2,
+                                         params.ransac_diagonal_iter, model=model)
         diag_lines = [l[0] for l in diag_lines]
         centers = []
         cen_lin = []
