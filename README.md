@@ -2,6 +2,8 @@
 
 http://tomasm.cz/imago
 
+There is also an experimantal [Haskell fork of Imago](https://github.com/tomasmcz/imago-hs).
+
 ## Requirements
 
 - Python 2.7 (including dev)
