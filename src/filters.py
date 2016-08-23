@@ -41,8 +41,8 @@ def edge_detection(image):
     new_image = image.filter(ImageFilter.GaussianBlur())
     # GaussianBlur is undocumented class, it might not work in future versions
     # of PIL
-    new_image = Image.fromstring('L', image.size,
-                             pcf.edge(image.size, image.tostring()))
+    new_image = Image.frombytes('L', image.size,
+                             pcf.edge(image.size, image.tobytes()))
     return new_image
 
 def peaks(image):

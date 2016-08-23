@@ -29,7 +29,7 @@ class Screen:
 
     def display_picture(self, im):
         """Display image on PyGame screen."""
-        pg_img = pygame.image.frombuffer(im.tostring(), im.size, im.mode)
+        pg_img = pygame.image.frombuffer(im.tobytes(), im.size, im.mode)
         self._screen.blit(pg_img, (0,0))
         pygame.display.flip()
 

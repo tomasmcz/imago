@@ -19,7 +19,7 @@ class Screen:
         self._screen = pygame.display.get_surface()
 
     def display_picture(self, img):
-        pg_img = pygame.image.frombuffer(img.tostring(), img.size, img.mode)
+        pg_img = pygame.image.frombuffer(img.tobytes(), img.size, img.mode)
         self._screen.blit(pg_img, (0, 0))
         pygame.display.flip()
 

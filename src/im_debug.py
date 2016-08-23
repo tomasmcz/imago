@@ -23,7 +23,7 @@ def show(image, caption='', name=None):
     pygame.display.set_caption(caption)
     pygame.display.set_mode(image.size)
     main_surface = pygame.display.get_surface()
-    picture = pygame.image.frombuffer(image.tostring(), image.size, image.mode)
+    picture = pygame.image.frombuffer(image.tobytes(), image.size, image.mode)
     main_surface.blit(picture, (0, 0))
     pygame.display.update()
     while True:
