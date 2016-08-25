@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+# This script runs all the automated tests, or a select set of tests
+# named on the command line.
+#
+# Inputs are image files (.jpg and .png), expected imago results are the
+# matching .txt files.
+#
+
+# The "--all" argument to runtests runs all tests, even the ones marked
+# "skip".
+OPTIONAL_SKIP="-name skip -prune -o"
+if [ "$1" = "--all" ]; then
+    OPTIONAL_SKIP=""
+    shift
+fi
+
+
+# Run all tests in 'tests/' by default, or whatever ones the user named
+# on the command-line.  Ignore any subdirectories named "skip", so that
+# flaky tests can be easily (temporarily?) disabled.
+if [ -z "$*" ]; then
+    INPUT_SEARCH='tests/'
+else
+    INPUT_SEARCH="$*"
+fi
+INPUTS=$(find $INPUT_SEARCH $OPTIONAL_SKIP \( -name '*.jpg' -o -name '*.png' \) -print | sort)
+
+FAILED=''
+
+for INPUT in $INPUTS; do
+    echo running test: $INPUT
+
+    # Skip input image files that don't have a matching .txt file
+    # containing expected output.
+    EXPECTED=$(dirname $INPUT)/$(basename ${INPUT%.*}).txt
+    if [ ! -f $EXPECTED ]; then
+        echo "no expected-output file found"
+        continue
+    fi
+
+    # Run imago on the input file, check for failure.
+    rm -f $INPUT.out
+    ./imago $INPUT > $INPUT.out
+    if [ $? -ne 0 ]; then
+        echo "ERROR: imago returned failure"
+        FAILED="$FAILED $INPUT"
+        continue
+    fi
+
+    # imago ran successfully on the input file, compare output to expected.
+    diff -u $EXPECTED $INPUT.out
+    if [ $? -ne 0 ]; then
+        echo "ERROR: imago produced unexpected output"
+        FAILED="$FAILED $INPUT"
+    else
+        # clean up after this passed test
+        rm -f $INPUT.out
+    fi
+done
+
+# Report all the tests that failed.
+if [ -n "$FAILED" ]; then
+    echo "tests failed:"
+    for F in $FAILED; do
+        echo "    $F"
+    done
+    exit 1
+fi
