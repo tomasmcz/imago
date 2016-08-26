@@ -28,7 +28,7 @@ class Camera:
         """Get a new image from the camera."""
         for _ in range(5): #HACK TODO document this
             im = cv.QueryFrame(self._cam)
-        return Image.fromstring("RGB", cv.GetSize(im), im.tostring(), "raw",
+        return Image.frombytes("RGB", cv.GetSize(im), im.tobytes(), "raw",
                                 "BGR", 0, 1) 
     
     def __del__(self):

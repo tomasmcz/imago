@@ -54,7 +54,7 @@ def find(lines, size, l1, l2, bounds, hough, show_all, do_something, logger):
 
     im_l = im_l.filter(MyGaussianBlur(radius=3))
     #GaussianBlur is undocumented class, may not work in future versions of PIL
-    im_l_s = im_l.tostring()
+    im_l_s = im_l.tobytes()
 
     #import time
     #start = time.time()
@@ -130,5 +130,5 @@ def distance(im_l, grid, size):
     #im_g = im_g.filter(MyGaussianBlur(radius=3))
     #GaussianBlur is undocumented class, may not work in future versions of PIL
     #im_d, distance = combine(im_l, im_g)
-    distance_d = pcf.combine(im_l, im_g.tostring())
+    distance_d = pcf.combine(im_l, im_g.tobytes())
     return distance_d

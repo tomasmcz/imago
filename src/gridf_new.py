@@ -250,7 +250,7 @@ def find(lines, size, l1, l2, bounds, hough, show_all, do_something, logger):
             fig.canvas.draw()
             size_f = fig.canvas.get_width_height()
             buff = fig.canvas.tostring_rgb()
-            image_p = Image.fromstring('RGB', size_f, buff, 'raw')
+            image_p = Image.frombytes('RGB', size_f, buff, 'raw')
             do_something(image_p, "finding diagonals")
 
         logger("finding the grid")

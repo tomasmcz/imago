@@ -25,9 +25,9 @@ class Hough:
         return cls(size, dt, initial_angle)
 
     def transform(self, image):
-        image_s = pcf.hough(self.size, image.tostring(), self.initial_angle,
+        image_s = pcf.hough(self.size, image.tobytes(), self.initial_angle,
                             self.dt)
-        image_t = Image.fromstring('L', self.size, image_s)
+        image_t = Image.frombytes('L', self.size, image_s)
         return image_t
 
     def apply_filter(self, filter_f):

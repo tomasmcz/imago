@@ -80,7 +80,7 @@ def board(image, intersections, show_all, do_something, logger):
         fig.canvas.draw()
         size = fig.canvas.get_width_height()
         buff = fig.canvas.tostring_rgb()
-        image_p = Image.fromstring('RGB', size, buff, 'raw')
+        image_p = Image.frombytes('RGB', size, buff, 'raw')
         do_something(image_p, "color distribution")
 
     color_data = [(s[0], s[1]) for s in board_raw]
@@ -103,7 +103,7 @@ def board(image, intersections, show_all, do_something, logger):
         fig.canvas.draw()
         size = fig.canvas.get_width_height()
         buff = fig.canvas.tostring_rgb()
-        image_p = Image.fromstring('RGB', size, buff, 'raw')
+        image_p = Image.frombytes('RGB', size, buff, 'raw')
         do_something(image_p, "color clustering")
 
     clusters[0] = [(p[1], 'B') for p in clusters[0]]
