@@ -41,7 +41,7 @@ for INPUT in $INPUTS; do
 
     # Run imago on the input file, check for failure.
     rm -f $INPUT.out
-    ./imago $INPUT > $INPUT.out
+    ./imago --rng-seed "runtests rng seed" $INPUT > $INPUT.out
     if [ $? -ne 0 ]; then
         echo "ERROR: imago returned failure"
         FAILED="$FAILED $INPUT"
