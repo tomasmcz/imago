@@ -1,6 +1,7 @@
 # Imago Go Image Recognition
 
 [![Build Status](https://travis-ci.org/tomasmcz/imago.svg?branch=master)](https://travis-ci.org/tomasmcz/imago)
+[![Documentation Status](https://readthedocs.org/projects/imago/badge/?version=latest)](http://imago.readthedocs.io/en/latest/?badge=latest)
 
 http://tomasm.cz/imago
 
