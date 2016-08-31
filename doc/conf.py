@@ -15,6 +15,11 @@
 import sys
 import os
 
+import mock
+MOCK_MODULES = ['pcf', 'pygame', 'pygame.locals', 'Image', 'cv']
+for mod_name in MOCK_MODULES:
+        sys.modules[mod_name] = mock.Mock()
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -51,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Imago'
-copyright = u'2014, Tomáš Musil'
+copyright = u'2014-2016, Tomáš Musil'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
