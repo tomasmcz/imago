@@ -31,11 +31,12 @@ Run `./imago --help` for help and list of all options.
 ## Tests
 
 The imago test suite lives in the
-[imago-tests](https://github.com/tomasmcz/imago-tests) repo, available
-as a submodule of the [imago](https://github.com/tomasmcz/imago) repo
-in the tests/ directory.
+[imago-tests](https://github.com/tomasmcz/imago-tests) repository, which is a 
+[submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) of this repository.
+Run `git submodule init; git submodule update` (or clone this repository with
+`git clone --recursive`) to get the test data. 
 
-To run the tests, build imago and run "./runtests" from the root of the
+To run the tests, build imago and run `./runtests` from the root of the
 working directory.
 
 The runtests program runs imago on each input image and compares the
@@ -43,4 +44,9 @@ output to the expected.  Any discrepancy is a test failure.
 
 Failing tests can be disabled by moving them into a directory named
 "skip".  "skip" directories are by default ignored by the runtests
-program.  Run "./runtests --all" to include tests marked "skip".
+program.  Run `./runtests --all` to include tests marked "skip".
+
+## Contributors
+
+- Tomáš Musil (@tomasmcz)
+- Sebastian Kuzminsky (@SebKuzminsky)
