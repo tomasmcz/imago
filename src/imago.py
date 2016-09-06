@@ -6,6 +6,7 @@ import sys
 import os
 import argparse
 import pickle
+import random
 
 try:
     from PIL import Image, ImageDraw
@@ -38,6 +39,7 @@ def argument_parser():
                         help="output in SGF")
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
                         help="report progress")
+    parser.add_argument('--rng-seed', dest='rng_seed', help="Specify random number generator seed, for consistent test results.")
     return parser
  
 
@@ -50,6 +52,8 @@ def main():
 
     show_all = args.show_all
     verbose = args.verbose
+
+    random.seed(args.rng_seed)
 
     try:
         image = Image.open(args.files[0])

@@ -27,3 +27,20 @@ Run `./imago image.jpg` to extract game position from image.jpg.
 Run `./imago -m image.jpg` to manually select grid position.
 Run `./imago image000.jpg image001.jpg image002.jpg ...` to produce a game record from a sequence of images, one for every move. Use `-S` option to select SGF output. 
 Run `./imago --help` for help and list of all options.
+
+## Tests
+
+The imago test suite lives in the
+[imago-tests](https://github.com/tomasmcz/imago-tests) repo, available
+as a submodule of the [imago](https://github.com/tomasmcz/imago) repo
+in the tests/ directory.
+
+To run the tests, build imago and run "./runtests" from the root of the
+working directory.
+
+The runtests program runs imago on each input image and compares the
+output to the expected.  Any discrepancy is a test failure.
+
+Failing tests can be disabled by moving them into a directory named
+"skip".  "skip" directories are by default ignored by the runtests
+program.  Run "./runtests --all" to include tests marked "skip".
