@@ -14,5 +14,5 @@ before_install:
 
 # command to run tests
 script:
-  - ./imago image.jpg
+  - ./imago --rng-seed 1234 image.jpg
   - ./runtests
