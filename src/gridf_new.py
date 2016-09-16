@@ -191,7 +191,14 @@ def score(lines, points):
 
 def find(lines, size, l1, l2, bounds, hough, show_all, do_something, logger):
     """Find the best grid given the *lines* and *size* of the image.
-    
+
+    lines: A list containing two lists of lines detected in the image.
+        Each list of lines contains lines that are more-or-less parallel
+        to each other.  The lines in the two lists are more-or-less
+        perpendicular to each other.
+
+    size: A list of (width, height) of the input image, in pixels.
+
     Last three parameters serves for debugging, *l1*, *l2*, *bounds* and *hough*
     are here for compatibility with older version of gridf, so they can be
     easily exchanged, tested and compared.
