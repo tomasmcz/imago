@@ -29,6 +29,8 @@ def prepare(image, show_image, logger):
     return im_h
  
 def transform(image, hough, show_image):
+    """Produces a simplified Hough transformation of the input image."""
+
     # TODO comment
     im_hough = hough.transform(image)
     show_image(im_hough, "hough transform")
