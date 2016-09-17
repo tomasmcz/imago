@@ -20,12 +20,12 @@ def lines(corners):
             [(corners[0], corners[1]), (corners[2], corners[3])])
 
 def _lines(corners, n):
+    # `x` is a line that joins the midpoints of two oposite sides
+    # of the quadrilateral defined by the four passed-in corners.
+    x = half_line(corners)
+
     # TODO what is this?
     if n == 0:
-        # `x` is a line that joins the midpoints of two oposite sides
-        # of the quadrilateral defined by the four passed-in corners.
-        x = half_line(corners)
-
         # This recurses to look at the part of the quadrilateral on *one*
         # side of `x`.  Returns all lines on that side, not including `x`
         # but including the other edge.
@@ -41,7 +41,6 @@ def _lines(corners, n):
         return (l0 + l1 + l2)
 
     else:
-        x = half_line(corners)
         c = intersection(line(x[0], corners[2]), line(corners[1], corners[3]))
         d = intersection(line(corners[0], corners[3]), line(corners[1], corners[2]))
         if d:
