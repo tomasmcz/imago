@@ -46,7 +46,19 @@ def _lines(corners, n):
 
 
 def half_line(corners):
-    # TODO what is this?
+    """Divides a quadrilateral in half.
+
+    The argument `corners` is a list of four points (tuples of (x, y)),
+    representing the corners of a quadrilateral.  The list may start
+    on any of the four corners, but must go around the quadrilateral in
+    clockwise or counter-clockwise order; skipping around is not allowed.
+
+    The function returns a line (a list of two points) that joins the
+    midpoints of two oposite sides of the quadrilateral defined by the
+    four passed-in corners.  Arbitrarily, the bisected sides are the
+    one joining corner 0 and corner 1, and the one joining corner 2 and
+    corner 3."""
+
     c = center(corners)
     d = intersection(line(corners[0], corners[3]), line(corners[1], corners[2]))
     if d:
