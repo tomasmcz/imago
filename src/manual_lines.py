@@ -61,6 +61,9 @@ def half_line(corners):
     corner 3."""
 
     c = center(corners)
+
+    # `d` is the perspective vanishing point for the two sides that
+    # we're *not* bisecting.
     d = intersection(line(corners[0], corners[3]), line(corners[1], corners[2]))
     if d:
         l = line(c, d)
