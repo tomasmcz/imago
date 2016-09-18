@@ -68,7 +68,13 @@ def l2ad((a, b), size):
     return (angle, distance)
 
 def line(x, y):
-    """Return parametric representation of line."""
+    """Given two points `x` and `y`, compute the line joining them.
+
+    `x` and `y` are 2-tuples of the (x, y) coordinates of the points.
+
+    The function returns a 3-tuple (a, b, c) such that the line through
+    the points `x` and `y` is described by the equation `ax + by = c` ."""
+
     a = x[1] - y[1]
     b = y[0] - x[0]
     c = a * y[0] + b * y[1]
