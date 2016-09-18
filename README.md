@@ -12,6 +12,7 @@ There is also an experimantal [Haskell version of Imago](https://github.com/toma
 - Python 2.7 (including dev)
 - PIL >= 3.0
 - pygame
+- matplotlib (for generating debug images)
 - openCV (if you want to use a camera, otherwise not needed)
 - for documentation:
     - sphinx

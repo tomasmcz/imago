@@ -120,10 +120,6 @@ def main():
                 d_file.close()
         else:
             lines, l1, l2, bounds, hough = linef.find_lines(image, do_something, logger)
-            #d_file = open('lines09.pickle', 'wb')
-            #pickle.dump(lines, d_file)
-            #d_file.close() #TODO delete this
-
 
         grid, lines = gridf.find(lines, image.size, l1, l2, bounds, hough,
                                  show_all, do_something, logger)

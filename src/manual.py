@@ -94,8 +94,10 @@ def find_lines(im_orig):
                     draw = ImageDraw.Draw(im)
                     try:
                         l_vert, l_hor = lines(corners)
-                    except Exception:
+                    except Exception as e:
+                        print "exception!", e
                         corners = corners[:-1]
+                        continue
                     for l in l_vert:
                         draw.line(l, fill=color, width=line_width)
                     for l in l_hor:
