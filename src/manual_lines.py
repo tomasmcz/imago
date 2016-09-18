@@ -23,8 +23,11 @@ def _lines(corners, n):
     # TODO what is this?
     if n == 0:
         x = half_line(corners)
-        return (_lines([corners[0], x[0], x[1], corners[3]], 1) + [x] + 
-                _lines([x[0], corners[1], corners[2], x[1]], 1))
+        l0 = _lines([corners[0], x[0], x[1], corners[3]], 1)
+        l1 = [x]
+        l2 = _lines([x[0], corners[1], corners[2], x[1]], 1)
+        return (l0 + l1 + l2)
+
     else:
         x = half_line(corners)
         c = intersection(line(x[0], corners[2]), line(corners[1], corners[3]))
