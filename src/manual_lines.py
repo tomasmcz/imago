@@ -1,5 +1,6 @@
 """Computing the grid"""
 
+import unittest
 from math import sqrt, acos, copysign
 from geometry import l2ad, line, intersection
 
@@ -74,3 +75,90 @@ def center(corners):
     """Given a list of four corner points, return the center of the square."""
     return intersection(line(corners[0], corners[2]), 
                         line(corners[1], corners[3]))
+
+
+#
+# Just tests below here.
+#
+
+class test_manual_lines(unittest.TestCase):
+    def test_half_line(self):
+
+        """This function tests the half_line() function.  It passes
+        in corner-tuples for a bunch of different quadrilaterals and
+        verifies that the returned half-line is the expected one."""
+
+        # square
+        corners = (
+            (0, 0),
+            (10, 0),
+            (10, 10),
+            (0, 10)
+        )
+        r = half_line(corners)
+        assert(r == ((5, 0), (5, 10)))
+
+        # parallelogram leaning right
+        corners = (
+            (0, 0),
+            (10, 0),
+            (20, 10),
+            (10, 10)
+        )
+        r = half_line(corners)
+        assert(r == ((5, 0), (15, 10)))
+
+        # parallelogram leaning up
+        corners = (
+            (0, 0),
+            (10, 10),
+            (10, 20),
+            (0, 10)
+        )
+        r = half_line(corners)
+        assert(r == ((5, 5), (5, 15)))
+
+        # isosceles trapezoid, pinched at top
+        corners = (
+            (0, 0),
+            (10, 0),
+            (8, 10),
+            (2, 10)
+        )
+        r = half_line(corners)
+        assert(r == ((5, 0), (5, 10)))
+
+        # isosceles trapezoid, pinched at bottom
+        corners = (
+            (2, 0),
+            (8, 0),
+            (10, 10),
+            (0, 10)
+        )
+        r = half_line(corners)
+        assert(r == ((5, 0), (5, 10)))
+
+        # isosceles trapezoid, pinched at right
+        corners = (
+            (0, 0),
+            (10, 2),
+            (10, 8),
+            (0, 10)
+        )
+        r = half_line(corners)
+        assert(r == ((6, 1), (6, 9)))
+
+        # isosceles trapezoid, pinched at left
+        corners = (
+            (0, 2),
+            (10, 0),
+            (10, 10),
+            (0, 8)
+        )
+        r = half_line(corners)
+        assert(r == ((4, 1), (4, 9)))
+
+
+if __name__ == '__main__':
+    suite = unittest.TestLoader().loadTestsFromTestCase(test_manual_lines)
+    unittest.TextTestRunner(verbosity=2).run(suite)
