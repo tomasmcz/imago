@@ -1,5 +1,6 @@
 """Imago geometry module."""
 
+import unittest
 from math import sin, cos, atan, pi
 
 class V(object):
@@ -67,7 +68,13 @@ def l2ad((a, b), size):
     return (angle, distance)
 
 def line(x, y):
-    """Return parametric representation of line."""
+    """Given two points `x` and `y`, compute the line joining them.
+
+    `x` and `y` are 2-tuples of the (x, y) coordinates of the points.
+
+    The function returns a 3-tuple (a, b, c) such that the line through
+    the points `x` and `y` is described by the equation `ax + by = c` ."""
+
     a = x[1] - y[1]
     b = y[0] - x[0]
     c = a * y[0] + b * y[1]
@@ -80,3 +87,38 @@ def intersection(p, q):
         return None
     return (int(round(float(q[1] * p[2] - p[1] * q[2]) / det)), 
             int(round(float(p[0] * q[2] - q[0] * p[2]) / det)))
+
+
+#
+# Just tests below here.
+#
+
+class test_geometry(unittest.TestCase):
+    def test_line(self):
+        # y = 0
+        p0 = (0, 0)
+        p1 = (10, 0)
+        l = line(p0, p1)
+        assert(l == (0, 10, 0))
+
+        # y = 1
+        p0 = (0, 1)
+        p1 = (10, 1)
+        l = line(p0, p1)
+        assert(l == (0, 10, 10))
+
+        # x = 0
+        p0 = (0, 0)
+        p1 = (0, -123)
+        l = line(p0, p1)
+        assert(l == (123, 0, 0))
+
+        p0 = (10, 10)
+        p1 = (20, 30)
+        l = line(p0, p1)
+        assert(l == (-20, 10, -100))
+
+
+if __name__ == '__main__':
+    suite = unittest.TestLoader().loadTestsFromTestCase(test_geometry)
+    unittest.TextTestRunner(verbosity=2).run(suite)

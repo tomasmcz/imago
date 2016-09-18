@@ -1,5 +1,6 @@
 """Computing the grid"""
 
+import unittest
 from math import sqrt, acos, copysign
 from geometry import l2ad, line, intersection
 
@@ -19,14 +20,29 @@ def lines(corners):
             [(corners[0], corners[1]), (corners[2], corners[3])])
 
 def _lines(corners, n):
+    # `mid_line` is a line that joins the midpoints of two oposite sides
+    # of the quadrilateral defined by the four passed-in corners.
+    mid_line = half_line(corners)
+
     # TODO what is this?
     if n == 0:
-        x = half_line(corners)
-        return (_lines([corners[0], x[0], x[1], corners[3]], 1) + [x] + 
-                _lines([x[0], corners[1], corners[2], x[1]], 1))
+        # This recurses to look at the part of the quadrilateral on
+        # *one* side of `mid_line`.  Returns all lines on that side,
+        # not including `mid_line` but including the other edge.
+        l0 = _lines([corners[0], mid_line[0], mid_line[1], corners[3]], 1)
+
+        # This is just the mid-line.
+        l1 = [mid_line]
+
+        # This recurses to look at the part of the quadrilateral on the
+        # *other* side of `mid_line`.  Returns all lines on that side,
+        # not including `mid_line` but including the other edge.
+        l2 = _lines([mid_line[0], corners[1], corners[2], mid_line[1]], 1)
+
+        return (l0 + l1 + l2)
+
     else:
-        x = half_line(corners)
-        c = intersection(line(x[0], corners[2]), line(corners[1], corners[3]))
+        c = intersection(line(mid_line[0], corners[2]), line(corners[1], corners[3]))
         d = intersection(line(corners[0], corners[3]), line(corners[1], corners[2]))
         if d:
             l = (intersection(line(corners[0], corners[1]), line(c, d)),
@@ -60,12 +76,18 @@ def half_line(corners):
     corner 3."""
 
     c = center(corners)
+
+    # `d` is the perspective vanishing point for the two sides that
+    # we're *not* bisecting.
     d = intersection(line(corners[0], corners[3]), line(corners[1], corners[2]))
-    if d:
-        l = line(c, d)
-    else:
-        l = line(c, (c[0] + corners[0][0] - corners[3][0], 
-                     c[1] + corners[0][1] - corners[3][1]))
+    if not d:
+        # No vanishing point found: the two sides must be parallel.
+        # So just use one of the sides as the direction.  This adds
+        # the vector from corner[3] to corner[0] to the center point we
+        # computed above.
+        d = (c[0] + corners[0][0] - corners[3][0], c[1] + corners[0][1] - corners[3][1])
+
+    l = line(c, d)
     p1 = intersection(l, line(corners[0], corners[1]))
     p2 = intersection(l, line(corners[2], corners[3]))
     return (p1, p2)
@@ -74,3 +96,90 @@ def center(corners):
     """Given a list of four corner points, return the center of the square."""
     return intersection(line(corners[0], corners[2]), 
                         line(corners[1], corners[3]))
+
+
+#
+# Just tests below here.
+#
+
+class test_manual_lines(unittest.TestCase):
+    def test_half_line(self):
+
+        """This function tests the half_line() function.  It passes
+        in corner-tuples for a bunch of different quadrilaterals and
+        verifies that the returned half-line is the expected one."""
+
+        # square
+        corners = (
+            (0, 0),
+            (10, 0),
+            (10, 10),
+            (0, 10)
+        )
+        r = half_line(corners)
+        assert(r == ((5, 0), (5, 10)))
+
+        # parallelogram leaning right
+        corners = (
+            (0, 0),
+            (10, 0),
+            (20, 10),
+            (10, 10)
+        )
+        r = half_line(corners)
+        assert(r == ((5, 0), (15, 10)))
+
+        # parallelogram leaning up
+        corners = (
+            (0, 0),
+            (10, 10),
+            (10, 20),
+            (0, 10)
+        )
+        r = half_line(corners)
+        assert(r == ((5, 5), (5, 15)))
+
+        # isosceles trapezoid, pinched at top
+        corners = (
+            (0, 0),
+            (10, 0),
+            (8, 10),
+            (2, 10)
+        )
+        r = half_line(corners)
+        assert(r == ((5, 0), (5, 10)))
+
+        # isosceles trapezoid, pinched at bottom
+        corners = (
+            (2, 0),
+            (8, 0),
+            (10, 10),
+            (0, 10)
+        )
+        r = half_line(corners)
+        assert(r == ((5, 0), (5, 10)))
+
+        # isosceles trapezoid, pinched at right
+        corners = (
+            (0, 0),
+            (10, 2),
+            (10, 8),
+            (0, 10)
+        )
+        r = half_line(corners)
+        assert(r == ((6, 1), (6, 9)))
+
+        # isosceles trapezoid, pinched at left
+        corners = (
+            (0, 2),
+            (10, 0),
+            (10, 10),
+            (0, 8)
+        )
+        r = half_line(corners)
+        assert(r == ((4, 1), (4, 9)))
+
+
+if __name__ == '__main__':
+    suite = unittest.TestLoader().loadTestsFromTestCase(test_manual_lines)
+    unittest.TextTestRunner(verbosity=2).run(suite)
