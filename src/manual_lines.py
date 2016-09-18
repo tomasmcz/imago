@@ -65,11 +65,14 @@ def half_line(corners):
     # `d` is the perspective vanishing point for the two sides that
     # we're *not* bisecting.
     d = intersection(line(corners[0], corners[3]), line(corners[1], corners[2]))
-    if d:
-        l = line(c, d)
-    else:
-        l = line(c, (c[0] + corners[0][0] - corners[3][0], 
-                     c[1] + corners[0][1] - corners[3][1]))
+    if not d:
+        # No vanishing point found: the two sides must be parallel.
+        # So just use one of the sides as the direction.  This adds
+        # the vector from corner[3] to corner[0] to the center point we
+        # computed above.
+        d = (c[0] + corners[0][0] - corners[3][0], c[1] + corners[0][1] - corners[3][1])
+
+    l = line(c, d)
     p1 = intersection(l, line(corners[0], corners[1]))
     p2 = intersection(l, line(corners[2], corners[3]))
     return (p1, p2)
