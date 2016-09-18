@@ -22,9 +22,21 @@ def lines(corners):
 def _lines(corners, n):
     # TODO what is this?
     if n == 0:
+        # `x` is a line that joins the midpoints of two oposite sides
+        # of the quadrilateral defined by the four passed-in corners.
         x = half_line(corners)
+
+        # This recurses to look at the part of the quadrilateral on *one*
+        # side of `x`.  Returns all lines on that side, not including `x`
+        # but including the other edge.
         l0 = _lines([corners[0], x[0], x[1], corners[3]], 1)
+
+        # This is just the mid-line.
         l1 = [x]
+
+        # This recurses to look at the part of the quadrilateral on the
+        # *other* side of `x`.  Returns all lines on that side, not
+        # including `x` but including the other edge.
         l2 = _lines([x[0], corners[1], corners[2], x[1]], 1)
         return (l0 + l1 + l2)
 
