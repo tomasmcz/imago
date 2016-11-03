@@ -1,5 +1,6 @@
 *.pyc
 *.so
+*.log
 saved
 captured
 doc/*.aux

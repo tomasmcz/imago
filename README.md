@@ -51,3 +51,4 @@ program.  Run `./runtests --all` to include tests marked "skip".
 
 - Tomáš Musil (@tomasmcz)
 - Sebastian Kuzminsky (@SebKuzminsky)
+- Nicolas Rochette
