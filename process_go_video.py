@@ -7,7 +7,7 @@ https://www.youtube.com/watch?v=_8piw9YtVmM
 
 import sys, os, math, time, cv2
 from PIL import Image
-from imago.src import imago, linef, intrsc, gridf_new as gridf, output
+from src import imago, linef, intrsc, gridf_new as gridf, output
 
 debug = False
 debug_dir = './tmp'
@@ -21,7 +21,7 @@ class Args :
         self.start = self.str_to_secs('2:50')
         self.end = self.str_to_secs('10:00')
         self.step = 1.0
-        self.all_boards_path = 'all_boards'
+        self.all_boards_path = None #'all_boards'
     def str_to_secs (self, str) :
         return sum([ float(x)*pow(60, i) for i, x in enumerate(reversed( str.split(':') )) ])
 
