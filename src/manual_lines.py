@@ -1,185 +1,55 @@
 """Computing the grid"""
 
-import unittest
 from math import sqrt, acos, copysign
 from geometry import l2ad, line, intersection
+import numpy as np
+
+fst = lambda l: map(lambda x: x[0], l)
+snd = lambda l: map(lambda x: x[1], l)
+
+def gen_line(n, start, end):
+    yield start
+    for i in range(1, n - 1):
+        yield (start[0] + i * (end[0] - start[0]) / float(n - 1),
+               start[1] + i * (end[1] - start[1]) / float(n - 1))
+    yield end
 
 def lines(corners):
     # TODO Error on triangle 
-    corners.sort() # TODO does this help?
-    # TODO refactor this vvv
-    cor_d = [(corners[0], (c[0] - corners[0][0], c[1] - corners[0][1]), c) for c in
-             corners[1:]]
-    cor_d = [(float(a[0] * b[0] + a[1] * b[1]) / (sqrt(a[0] ** 2 + a[1] ** 2) *
-              sqrt(b[0] **2 + b[1] ** 2)), a[0] * b[1] - b[0] * a[1], c) for a, b, c in cor_d]
-    cor_d = sorted([(copysign(acos(min(a, 1)), b), c) for a, b, c in cor_d])
-    corners = [corners[0]] + [c for _, c in cor_d]
-    return (_lines(corners, 0) + 
-            [(corners[0], corners[3]), (corners[1], corners[2])],
-            _lines(corners[1:4] + [corners[0]], 0) + 
-            [(corners[0], corners[1]), (corners[2], corners[3])])
+    
+    #sort the corners:
+    center = (sum(fst(corners))/4., sum(snd(corners))/4.)
+    angles = list(map(lambda x: (np.angle(x[0] - center[0] + (x[1] - center[1])*1j), x), corners))
+    corners = list(snd(sorted(angles)))    
 
-def _lines(corners, n):
-    # `mid_line` is a line that joins the midpoints of two oposite sides
-    # of the quadrilateral defined by the four passed-in corners.
-    mid_line = half_line(corners)
+    gcorners = [(0,0), (0,100), (100, 100), (100,0)]
+    l1 = list(gen_line(19, gcorners[0], gcorners[1]))
+    l2 = list(gen_line(19, gcorners[1], gcorners[2]))
+    l3 = list(gen_line(19, gcorners[3], gcorners[2]))
+    l4 = list(gen_line(19, gcorners[0], gcorners[3]))
+    
+    c_g = np.array([
+                [gcorners[0][0], gcorners[1][0], gcorners[2][0]],
+                [gcorners[0][1], gcorners[1][1], gcorners[2][1]],
+                [1, 1, 1]
+            ])
+    lmt_g = np.linalg.solve(c_g, np.array([gcorners[3][0], gcorners[3][1], 1]))
+    
+    c_r = np.array([
+                [corners[0][0], corners[1][0], corners[2][0]],
+                [corners[0][1], corners[1][1], corners[2][1]],
+                [1, 1, 1]
+            ])
+    lmt_r = np.linalg.solve(c_r, np.array([corners[3][0], corners[3][1], 1]))
 
-    # TODO what is this?
-    if n == 0:
-        # This recurses to look at the part of the quadrilateral on
-        # *one* side of `mid_line`.  Returns all lines on that side,
-        # not including `mid_line` but including the other edge.
-        l0 = _lines([corners[0], mid_line[0], mid_line[1], corners[3]], 1)
+    mA = np.multiply(c_g, np.array([lmt_g]*3))
+    mB = np.multiply(c_r, np.array([lmt_r]*3))
+    mC = np.matmul(mB, np.linalg.inv(mA))
+    
+    def perspective(point):
+        x, y, z = np.matmul(mC, np.array([point[0], point[1], 1]))
+        return (x/z, y/z)
 
-        # This is just the mid-line.
-        l1 = [mid_line]
-
-        # This recurses to look at the part of the quadrilateral on the
-        # *other* side of `mid_line`.  Returns all lines on that side,
-        # not including `mid_line` but including the other edge.
-        l2 = _lines([mid_line[0], corners[1], corners[2], mid_line[1]], 1)
-
-        return (l0 + l1 + l2)
-
-    else:
-        c = intersection(line(mid_line[0], corners[2]), line(corners[1], corners[3]))
-        d = intersection(line(corners[0], corners[3]), line(corners[1], corners[2]))
-        if d:
-            l = (intersection(line(corners[0], corners[1]), line(c, d)),
-                 intersection(line(corners[2], corners[3]), line(c, d)))
-        else:
-            lx = line(c, (c[0] + corners[0][0] - corners[3][0], 
-                      c[1] + corners[0][1] - corners[3][1]))
-            l = (intersection(line(corners[0], corners[1]), lx),
-                 intersection(line(corners[2], corners[3]), lx))
-        l2 = half_line([corners[0], l[0], l[1], corners[3]])
-        if n == 1:
-            return ([l, l2] + _lines([l[0], l2[0], l2[1], l[1]], 2)
-                    + _lines([corners[0], l2[0], l2[1], corners[3]], 2)
-                    + _lines([l[0], corners[1], corners[2], l[1]], 2))
-        if n == 2:
-            return [l, l2]
-
-
-def half_line(corners):
-    """Divides a quadrilateral in half.
-
-    The argument `corners` is a list of four points (tuples of (x, y)),
-    representing the corners of a quadrilateral.  The list may start
-    on any of the four corners, but must go around the quadrilateral in
-    clockwise or counter-clockwise order; skipping around is not allowed.
-
-    The function returns a line (a list of two points) that joins the
-    midpoints of two oposite sides of the quadrilateral defined by the
-    four passed-in corners.  Arbitrarily, the bisected sides are the
-    one joining corner 0 and corner 1, and the one joining corner 2 and
-    corner 3."""
-
-    c = center(corners)
-
-    # `d` is the perspective vanishing point for the two sides that
-    # we're *not* bisecting.
-    d = intersection(line(corners[0], corners[3]), line(corners[1], corners[2]))
-    if not d:
-        # No vanishing point found: the two sides must be parallel.
-        # So just use one of the sides as the direction.  This adds
-        # the vector from corner[3] to corner[0] to the center point we
-        # computed above.
-        d = (c[0] + corners[0][0] - corners[3][0], c[1] + corners[0][1] - corners[3][1])
-
-    l = line(c, d)
-    p1 = intersection(l, line(corners[0], corners[1]))
-    p2 = intersection(l, line(corners[2], corners[3]))
-    return (p1, p2)
-
-def center(corners):
-    """Given a list of four corner points, return the center of the square."""
-    return intersection(line(corners[0], corners[2]), 
-                        line(corners[1], corners[3]))
-
-
-#
-# Just tests below here.
-#
-
-class test_manual_lines(unittest.TestCase):
-    def test_half_line(self):
-
-        """This function tests the half_line() function.  It passes
-        in corner-tuples for a bunch of different quadrilaterals and
-        verifies that the returned half-line is the expected one."""
-
-        # square
-        corners = (
-            (0, 0),
-            (10, 0),
-            (10, 10),
-            (0, 10)
-        )
-        r = half_line(corners)
-        assert(r == ((5, 0), (5, 10)))
-
-        # parallelogram leaning right
-        corners = (
-            (0, 0),
-            (10, 0),
-            (20, 10),
-            (10, 10)
-        )
-        r = half_line(corners)
-        assert(r == ((5, 0), (15, 10)))
-
-        # parallelogram leaning up
-        corners = (
-            (0, 0),
-            (10, 10),
-            (10, 20),
-            (0, 10)
-        )
-        r = half_line(corners)
-        assert(r == ((5, 5), (5, 15)))
-
-        # isosceles trapezoid, pinched at top
-        corners = (
-            (0, 0),
-            (10, 0),
-            (8, 10),
-            (2, 10)
-        )
-        r = half_line(corners)
-        assert(r == ((5, 0), (5, 10)))
-
-        # isosceles trapezoid, pinched at bottom
-        corners = (
-            (2, 0),
-            (8, 0),
-            (10, 10),
-            (0, 10)
-        )
-        r = half_line(corners)
-        assert(r == ((5, 0), (5, 10)))
-
-        # isosceles trapezoid, pinched at right
-        corners = (
-            (0, 0),
-            (10, 2),
-            (10, 8),
-            (0, 10)
-        )
-        r = half_line(corners)
-        assert(r == ((6, 1), (6, 9)))
-
-        # isosceles trapezoid, pinched at left
-        corners = (
-            (0, 2),
-            (10, 0),
-            (10, 10),
-            (0, 8)
-        )
-        r = half_line(corners)
-        assert(r == ((4, 1), (4, 9)))
-
-
-if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(test_manual_lines)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    l1_, l2_, l3_, l4_ = map(lambda x: map(perspective, x), [l1, l2, l3, l4])
+    
+    return (zip(l1_, l3_), zip(l2_, l4_))
