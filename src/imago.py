@@ -10,14 +10,14 @@ import random
 
 try:
     from PIL import Image, ImageDraw
-except ImportError, msg:
-    print >> sys.stderr, msg
+except ImportError as msg:
+    print(msg, file=sys.stderr)
     sys.exit(1)
 
-import linef
-import intrsc
-import gridf_new as gridf
-import output
+from . import linef
+from . import intrsc
+from . import gridf_new as gridf
+from . import output
 
 def argument_parser():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -57,8 +57,8 @@ def main():
 
     try:
         image = Image.open(args.files[0])
-    except IOError, msg:
-        print >> sys.stderr, msg
+    except IOError as msg:
+        print(msg, file=sys.stderr)
         return 1
     if image.mode == 'P':
         image = image.convert('RGB')
@@ -75,7 +75,7 @@ def main():
         do_something = Imsave("saved/" + args.files[0][:-4] + "_" +
                                str(image.size[0]) + "/").save
     else:
-        import im_debug
+        from . import im_debug
         do_something = im_debug.show
 
     if verbose:
@@ -87,8 +87,8 @@ def main():
             def __call__(self, m):
                 t_n = time.time()
                 if self.t > 0:
-                    print >> sys.stderr, "\t" + str(t_n - self.t)
-                print >> sys.stderr, m
+                    print("\t" + str(t_n - self.t), file=sys.stderr)
+                print(m, file=sys.stderr)
                 self.t = t_n
         logger = Logger()
 
@@ -97,7 +97,7 @@ def main():
             pass
         
     if args.manual_mode:
-        import manual
+        from . import manual
         try:
             lines = manual.find_lines(image)
         except manual.UserQuitError:
@@ -110,7 +110,7 @@ def main():
             cache_dir = "/".join(filename.split('/')[:-1])
             if os.path.exists(filename):
                 lines, l1, l2, bounds, hough = pickle.load(open(filename))
-                print >> sys.stderr, "using cached results"
+                print("using cached results", file=sys.stderr)
             else:
                 lines, l1, l2, bounds, hough = linef.find_lines(image, do_something, logger)
                 if not os.path.isdir(cache_dir):
@@ -139,20 +139,20 @@ def main():
     if len(args.files) == 1:
 
         if args.sgf_output:
-            print board.asSGFsetPos()
+            print(board.asSGFsetPos())
         else:
-            print board
+            print(board)
     
     else:
         game = output.Game(19, board) #TODO size parameter
         for f in args.files[1:]:
             try:
                 image = Image.open(f)
-            except IOError, msg:
-                print >> sys.stderr, msg
+            except IOError as msg:
+                print(msg, file=sys.stderr)
                 continue
             if verbose:
-                print >> sys.stderr, "Opening", f
+                print("Opening", f, file=sys.stderr)
             if image.mode == 'P':
                 image = image.convert('RGB')
             if image.size[0] > args.w:
@@ -162,10 +162,10 @@ def main():
             if args.sgf_output:
                 game.addMove(board)
             else:
-                print board
+                print(board)
 
         if args.sgf_output:
-            print game.asSGF()
+            print(game.asSGF())
 
     return 0
 
@@ -189,5 +189,5 @@ if __name__ == '__main__':
     try:
         sys.exit(main())
     except KeyboardInterrupt: #TODO does this work?
-        print >> sys.stderr, "Interrupted."
+        print("Interrupted.", file=sys.stderr)
         sys.exit(1)

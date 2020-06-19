@@ -168,15 +168,22 @@ static PyObject* py_edge(PyObject* self, PyObject* args)
 	return result;
 }
 
-
-static PyMethodDef myModule_methods[] = {
+static PyMethodDef pcf_methods[] = {
 	{"combine", py_combine, METH_VARARGS},
 	{"edge", py_edge, METH_VARARGS},
 	{"hough", py_hough, METH_VARARGS},
 	{NULL, NULL}
 };
 
-void initpcf()
-{
-		(void) Py_InitModule("pcf", myModule_methods);
+static struct PyModuleDef pcf_def = {
+        PyModuleDef_HEAD_INIT,
+        "pcf",     			   /* m_name */
+        "Performance Critical Functions",  /* m_doc */
+        -1,                  		   /* m_size */
+        pcf_methods,    		   /* m_methods */
+};
+
+PyMODINIT_FUNC PyInit_pcf(void) {
+    Py_Initialize();
+    return PyModule_Create(&pcf_def);
 }

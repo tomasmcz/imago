@@ -6,13 +6,13 @@ from math import sin, cos, pi
 
 try:
     from PIL import Image, ImageDraw
-except ImportError, msg:
-    print >> sys.stderr, msg
+except ImportError as msg:
+    print(msg, file=sys.stderr)
     sys.exit(1)
 
-import filters
-from hough import Hough
-import ransac
+from . import filters
+from .hough import Hough
+from . import ransac
 
 def prepare(image, show_image, logger):
     # TODO comment
@@ -46,6 +46,10 @@ def transform(image, hough, show_image):
 
     return im_h2
 
+def line_to_points(line, x):
+    a, b, c = line
+    return (x, (a*x + c) / (- b))
+
 def run_ransac(image):
     # TODO comment
     # TODO vizualize this
@@ -54,8 +58,8 @@ def run_ransac(image):
 
     data = []
 
-    for y in xrange(0, height):
-        for x in xrange(0, width):
+    for y in range(0, height):
+        for x in range(0, width):
             if image_l[x, y] > 128:
                 data.append((x, y))
                 if y < 30:
@@ -63,7 +67,6 @@ def run_ransac(image):
 
     dist = 3 
     [(line, points), (line2, points2)] = ransac.ransac_multi(2, data, dist, 250)
-    line_to_points = lambda (a, b, c), x: (x, (a*x + c) / (- b))
     # TODO width should not be here vvv
     # TODO refactor gridf to use standard equations instead of points
     line = [line_to_points(line, 0), line_to_points(line, width - 1)]
@@ -88,10 +91,10 @@ def find_lines(image, show_image, logger):
 
     r_lines, l1, l2 = run_ransac(im_h2) 
 
-    lines = map(hough.lines_from_list, r_lines)
+    lines = list(map(hough.lines_from_list, r_lines))
 
     # TODO refactor gridf to get rid of this:
-    bounds = sum(map(lambda l: [l[0], l[-1]], r_lines), []) 
+    bounds = sum([[l[0], l[-1]] for l in r_lines], []) 
     # sum(list, []) = flatten list
 
     # TODO do this only if show_all is true:
@@ -104,9 +107,10 @@ def find_lines(image, show_image, logger):
 
     return lines, l1, l2, bounds, hough # TODO
 
-def line_from_angl_dist((angle, distance), size):
+def line_from_angl_dist(xxx_todo_changeme, size):
     """Take *angle* and *distance* (from the center of the image) of a line and
     size of the image. Return the line represented by two points."""
+    (angle, distance) = xxx_todo_changeme
     if pi / 4 < angle < 3 * pi / 4:
         y1 = - size[1] / 2
         x1 = int(round((y1 * cos(angle) + distance) / sin(angle))) + size[0] / 2

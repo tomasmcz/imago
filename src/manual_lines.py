@@ -1,7 +1,7 @@
 """Computing the grid"""
 
 from math import sqrt, acos, copysign
-from geometry import l2ad, line, intersection
+from src.geometry import l2ad, line, intersection
 import numpy as np
 
 fst = lambda l: map(lambda x: x[0], l)

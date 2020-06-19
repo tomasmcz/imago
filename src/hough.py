@@ -4,7 +4,7 @@ from math import pi
 
 from PIL import Image
 
-import pcf
+from . import pcf
 
 class Hough:
     """Hough transform.

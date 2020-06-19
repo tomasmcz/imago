@@ -6,10 +6,10 @@ import colorsys
 
 from PIL import ImageDraw
 
-import filters
-import k_means
-import output
-import linef
+from . import filters
+from . import k_means
+from . import output
+from . import linef
 
 def dst(line):
     """Return normalized line."""
@@ -87,7 +87,7 @@ def board(image, intersections, show_all, do_something, logger):
 
     init_x = sum(c[0] for c in color_data) / float(len(color_data))
 
-    clusters, score = k_means.cluster(3, 2,zip(color_data, range(len(color_data))),
+    clusters, score = k_means.cluster(3, 2,list(zip(color_data, list(range(len(color_data))))),
                                [[0., 0.5], [init_x, 0.5], [1., 0.5]])
 
     if show_all:
@@ -118,9 +118,9 @@ def board(image, intersections, show_all, do_something, logger):
 
     #TODO 19 should be a size parameter
     try:
-        for i in xrange(19):
-            for _ in xrange(19):
-                board_r.append(board_rg.next())
+        for i in range(19):
+            for _ in range(19):
+                board_r.append(next(board_rg))
     except StopIteration:
         pass
     
@@ -146,8 +146,8 @@ def intersection(l1, l2):
 # TODO remove the parameter get_all
 def intersections_from_angl_dist(lines, size, get_all=True):
     """Take grid-lines and size of the image. Return intersections."""
-    lines0 = map(lambda l: to_general(l, size), lines[0])
-    lines1 = map(lambda l: to_general(l, size), lines[1])
+    lines0 = [to_general(l, size) for l in lines[0]]
+    lines1 = [to_general(l, size) for l in lines[1]]
     intersections = []
     for l1 in lines1:
         line = []
@@ -167,8 +167,9 @@ def rgb2lumsat(color):
         saturation = 1. - ((3. * min(color)) / sum(color)) 
     return luma, saturation
 
-def stone_color_raw(image, (x, y)):
+def stone_color_raw(image, xxx_todo_changeme):
     """Given image and coordinates, return stone color."""
+    (x, y) = xxx_todo_changeme
     size = 3 
     points = []
     for i in range(-size, size + 1):

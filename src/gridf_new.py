@@ -6,12 +6,12 @@ RANSAC inspired method.
 import random
 from math import sqrt
 
-from intrsc import intersections_from_angl_dist
-import linef
-import params
-import ransac
-import manual_lines as manual
-from geometry import l2ad
+from .intrsc import intersections_from_angl_dist
+from . import linef
+from . import params
+from . import ransac
+from . import manual_lines as manual
+from .geometry import l2ad
 
 # TODO comments, refactoring, move methods to appropriate modules
 
@@ -24,7 +24,7 @@ class BadGenError(Exception):
 def plot_line(line, c, size):
     """Plot a *line* with pyplot."""
     points = linef.line_from_angl_dist(line, size)
-    pyplot.plot(*zip(*points), color=c)
+    pyplot.plot(*list(zip(*points)), color=c)
 
 class Diagonal_model:
     """Ransac model for finding diagonals."""
@@ -35,8 +35,8 @@ class Diagonal_model:
 
     def initial_g(self):
         l1, l2 = random.sample(self.lines, 2)
-        for i in xrange(len(l1)):
-            for j in xrange(len(l2)):
+        for i in range(len(l1)):
+            for j in range(len(l2)):
                 if i == j:
                     continue
                 if l1[i] and l2[j]:
@@ -47,10 +47,10 @@ class Diagonal_model:
 
     def initial(self):
         try:
-            nxt = self.gen.next()
+            nxt = next(self.gen)
         except StopIteration:
             self.gen = self.initial_g()
-            nxt = self.gen.next()
+            nxt = next(self.gen)
         return nxt
 
     def get(self, sample):
@@ -63,7 +63,7 @@ class Diagonal_model:
         cons = []
         score = 0
         a, b, c = est
-        dst = lambda (x, y): abs(a * x + b * y + c) / sqrt(a*a+b*b)
+        dst = lambda x_y: abs(a * x_y[0] + b * x_y[1] + c) / sqrt(a*a+b*b)
         l1 = None
         l2 = None
         for p in self.data:
@@ -79,8 +79,10 @@ class Diagonal_model:
 
         return score, cons
 
-def intersection((a1, b1, c1), (a2, b2, c2)):
+def intersection(xxx_todo_changeme4, xxx_todo_changeme5):
     """Intersection of two lines, given by coefficients in their equations."""
+    (a1, b1, c1) = xxx_todo_changeme4
+    (a2, b2, c2) = xxx_todo_changeme5
     delim = float(a1 * b2 - b1 * a2)
     if delim == 0:
         return None
@@ -90,7 +92,8 @@ def intersection((a1, b1, c1), (a2, b2, c2)):
 
 class Point:
     """Class that represents a point in 2D."""
-    def __init__(self, (x, y)):
+    def __init__(self, xxx_todo_changeme2):
+        (x, y) = xxx_todo_changeme2
         self.x = x
         self.y = y
 
@@ -118,12 +121,14 @@ class Line:
     each intersection has two lines that go through it.
     """
 
-    def __init__(self, (a, b, c)):
+    def __init__(self, xxx_todo_changeme3):
+        (a, b, c) = xxx_todo_changeme3
         self.a, self.b, self.c = (a, b, c)
         self.points = []
 
     @classmethod
-    def from_ad(cls, (a, d), size):
+    def from_ad(cls, xxx_todo_changeme1, size):
+        (a, d) = xxx_todo_changeme1
         p = linef.line_from_angl_dist((a, d), size)
         return cls(ransac.points_to_line(*p))
 
@@ -167,7 +172,7 @@ def gen_corners(d1, d2, min_size):
             # there is not a corresponding intersection
             # TODO create an intersection?
         try:
-            yield manual.lines(map(lambda p: p.to_tuple(), [c2, c1, c3, c4]))
+            yield manual.lines([p.to_tuple() for p in [c2, c1, c3, c4]])
         except (TypeError):
             pass
             # the square was too small to fit 17 lines inside
@@ -183,7 +188,7 @@ def score(lines, points):
     # direction
     score = 0
     for p in points:
-        s = min(map(lambda l: dst(p, l), lines))
+        s = min([dst(p, l) for l in lines])
         s = min(s, 2)
         score += s
     return score
@@ -204,8 +209,8 @@ def find(lines, size, l1, l2, bounds, hough, show_all, do_something, logger):
     easily exchanged, tested and compared.
     """
 
-    new_lines1 = map(lambda l: Line.from_ad(l, size), lines[0])
-    new_lines2 = map(lambda l: Line.from_ad(l, size), lines[1])
+    new_lines1 = [Line.from_ad(l, size) for l in lines[0]]
+    new_lines2 = [Line.from_ad(l, size) for l in lines[1]]
     for l1 in new_lines1:
         for l2 in new_lines2:
             p = Point(intersection(l1, l2))
@@ -221,7 +226,7 @@ def find(lines, size, l1, l2, bounds, hough, show_all, do_something, logger):
         y = y - size[1] / 2
         return sqrt(x * x + y * y)
 
-    for n_tries in xrange(3):
+    for n_tries in range(3):
         logger("finding the diagonals")
         model = Diagonal_model(points)
         diag_lines = ransac.ransac_multi(6, points, 2,
@@ -229,7 +234,7 @@ def find(lines, size, l1, l2, bounds, hough, show_all, do_something, logger):
         diag_lines = [l[0] for l in diag_lines]
         centers = []
         cen_lin = []
-        for i in xrange(len(diag_lines)):
+        for i in range(len(diag_lines)):
             line1 = diag_lines[i]
             for line2 in diag_lines[i+1:]:
                 c = intersection(line1, line2)
@@ -241,14 +246,15 @@ def find(lines, size, l1, l2, bounds, hough, show_all, do_something, logger):
             import matplotlib.pyplot as pyplot
             from PIL import Image
 
-            def plot_line_g((a, b, c), max_x):
+            def plot_line_g(xxx_todo_changeme, max_x):
+                (a, b, c) = xxx_todo_changeme
                 find_y = lambda x: - (c + a * x) / b
                 pyplot.plot([0, max_x], [find_y(0), find_y(max_x)], color='b')
 
             fig = pyplot.figure(figsize=(8, 6))
             for l in diag_lines:
                 plot_line_g(l, size[0])
-            pyplot.scatter(*zip(*sum(points, [])))
+            pyplot.scatter(*list(zip(*sum(points, []))))
             if len(centers) >= 1:
                 pyplot.scatter([c[0] for c in centers], [c[1] for c in centers], color='r')
             pyplot.xlim(0, size[0])
@@ -275,7 +281,7 @@ def find(lines, size, l1, l2, bounds, hough, show_all, do_something, logger):
             grids = list(gen_corners(diag1, diag2, min(size) / 3))
             
             try:
-                new_sc, new_grid = min(map(lambda g: (score(sum(g, []), data), g), grids))
+                new_sc, new_grid = min([(score(sum(g, []), data), g) for g in grids])
                 if new_sc < sc:
                     sc, grid = new_sc, new_grid
             except ValueError:

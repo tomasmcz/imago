@@ -44,7 +44,7 @@ def projection(p, l, v):
     #TODO what is this?
     return V(*intersection(line(p, p + v.normal), line(*l)))
 
-def l2ad((a, b), size):
+def l2ad(xxx_todo_changeme, size):
     """Represent line as (angle, distance).
     
     Take a line (represented by two points) and image size.
@@ -52,6 +52,7 @@ def l2ad((a, b), size):
     from the center of the image.
 
     """
+    (a, b) = xxx_todo_changeme
     if (a[0] - b[0]) == 0:
         angle = pi / 2
     else:

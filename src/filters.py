@@ -7,7 +7,7 @@ preserved.
 from PIL import Image, ImageFilter
 import numpy as np
 
-import pcf
+from . import pcf
 
 def color_enhance(image):
     """Stretch all color channels to their full range."""
@@ -15,8 +15,8 @@ def color_enhance(image):
     min_r, min_g, min_b = 999, 999, 999
     max_r, max_g, max_b = -1, -1, -1
 
-    for x in xrange(image.size[0]):
-        for y in xrange(image.size[1]):
+    for x in range(image.size[0]):
+        for y in range(image.size[1]):
             min_r = min(min_r, image_l[x, y][0])
             max_r = max(max_r, image_l[x, y][0])
             min_g = min(min_g, image_l[x, y][1])
@@ -26,8 +26,8 @@ def color_enhance(image):
 
     new_image = Image.new('RGB', image.size)
     new_image_l = new_image.load()
-    for x in xrange(image.size[0]):
-        for y in xrange(image.size[1]):
+    for x in range(image.size[0]):
+        for y in range(image.size[1]):
             r, g, b = image_l[x, y]
             r = (r - min_r) * 255 / (max_r - min_r)
             g = (g - min_g) * 255 / (max_g - min_g)
@@ -70,8 +70,8 @@ def high_pass(image, height):
     new_image = Image.new('L', image.size)
     new_image_l = new_image.load()
     
-    for x in xrange(image.size[0]):
-        for y in xrange(image.size[1]):
+    for x in range(image.size[0]):
+        for y in range(image.size[1]):
             if image_l[x, y] < height:
                 new_image_l[x, y] = 0
             else:
@@ -89,8 +89,8 @@ def components(image, diameter):
     comp_counter = 1
 
     if diameter == 1:
-        for y in xrange(1, image.size[1] - 1):
-            for x in xrange(1, image.size[0] - 1):
+        for y in range(1, image.size[1] - 1):
+            for x in range(1, image.size[0] - 1):
                 if image_l[x, y]:
                     s = {0}
                     s.add(new_image_l[x - 1, y - 1])
@@ -116,8 +116,8 @@ def components(image, diameter):
                         components[c1] = components[c1] | components[c2]
                         components[c2] = None
     elif diameter == 2:
-        for y in xrange(2, image.size[1] - 2):
-            for x in xrange(2, image.size[0] - 2):
+        for y in range(2, image.size[1] - 2):
+            for x in range(2, image.size[0] - 2):
                 if image_l[x, y]:
 
                     s = {0}
@@ -138,7 +138,7 @@ def components(image, diameter):
                         try:
                             components[c].add((x, y))
                         except AttributeError:
-                            print s, c
+                            print(s, c)
                             raise AttributeError
                     else:
                         s.remove(0)
